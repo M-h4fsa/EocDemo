@@ -14,8 +14,4 @@ public class Choice {
     public boolean isHistorical() {
         return isHistorical;
     }
-
-    public int getScoreValue() {
-        return isHistorical ? 1 : 0;
-    }
 }

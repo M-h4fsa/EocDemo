@@ -1,12 +1,11 @@
+import java.util.List;
+
 public class Main {
     public static void main(String[] args) {
-        try {
-            JsonLoader loader = new JsonLoader("history.json");
-            Game game = new Game(loader.loadLeaders());
-            ConsoleUI ui = new ConsoleUI(game);
-            ui.run();
-        } catch (Exception e) {
-            System.err.println("Error: " + e.getMessage());
-        }
+        JsonLoader jsonLoader = new JsonLoader();
+        List<Leader> leaders = jsonLoader.loadLeaders("history.json");
+        ConsoleUI ui = new ConsoleUI();
+        Game game = new Game(leaders, ui);
+        game.start();
     }
 }

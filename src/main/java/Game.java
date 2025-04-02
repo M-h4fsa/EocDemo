@@ -4,94 +4,103 @@ import java.util.List;
 public class Game {
     private List<Leader> leaders;
     private Leader currentLeader;
+    private Level currentLevel;
     private int currentLevelIndex;
     private int score;
-    private List<Choice> playerChoices;
+    private ConsoleUI ui;
+    private List<String> playerChoices;
 
-    public Game(List<Leader> leaders) {
+    public Game(List<Leader> leaders, ConsoleUI ui) {
         this.leaders = leaders;
-        this.currentLevelIndex = 0;
+        this.ui = ui;
         this.score = 0;
+        this.currentLevelIndex = 0;
         this.playerChoices = new ArrayList<>();
     }
 
-    public void selectLeader(int leaderIndex) {
-        if (leaderIndex >= 0 && leaderIndex < leaders.size()) {
-            this.currentLeader = leaders.get(leaderIndex);
+    public void start() {
+        ui.displayWelcomeMessage();
+        ui.searchLevels(leaders);
+        boolean keepPlaying = true;
+
+        while (keepPlaying) {
+            currentLeader = ui.selectLeader(leaders);
+            score = 0;
+            currentLevelIndex = 0;
+            playerChoices.clear();
+
+            playRound();
+
+            displayChoicesSummary();
+            String choice = ui.displayEndOfRoundOptions(score, currentLeader.getLevels().size());
+            switch (choice) {
+                case "1":
+                    continue;
+                case "2":
+                    keepPlaying = false;
+                    break;
+            }
         }
+
+        ui.displayGoodbyeMessage();
     }
 
-    public Leader getCurrentLeader() {
-        return currentLeader;
-    }
-
-    public Level getCurrentLevel() {
-        if (currentLeader != null && currentLevelIndex < currentLeader.getLevels().size()) {
-            return currentLeader.getLevels().get(currentLevelIndex);
-        }
-        return null;
-    }
-
-    public void makeChoice(int choiceIndex) {
-        Level level = getCurrentLevel();
-        if (level != null && choiceIndex >= 0 && choiceIndex < level.getChoices().length) {
-            Choice choice = level.getChoices()[choiceIndex];
-            score += choice.getScoreValue();
-            playerChoices.add(choice);
+    private void playRound() {
+        int totalLevels = currentLeader.getLevels().size();
+        while (currentLevelIndex < totalLevels) {
+            currentLevel = currentLeader.getLevels().get(currentLevelIndex);
+            ui.displayLevel(currentLevel);
+            int choiceIndex = ui.getPlayerChoice() - 1;
+            makeChoice(choiceIndex);
             currentLevelIndex++;
+            displayProgressBar(score, totalLevels); // Progress based on score
         }
+    }
+
+    private void makeChoice(int choiceIndex) {
+        Choice selectedChoice = currentLevel.getChoices().get(choiceIndex);
+        boolean isCorrect = selectedChoice.isHistorical();
+        String choiceText = "Level " + currentLevel.getNumber() + ": You chose '" + selectedChoice.getText() + "' (" + (isCorrect ? "Correct" : "Incorrect") + ")";
+        playerChoices.add(choiceText);
+
+        if (isCorrect) {
+            score++;
+            System.out.println(ConsoleUI.ANSI_GREEN + "Correct! This was the historical choice." + ConsoleUI.ANSI_RESET);
+        } else {
+            System.out.println(ConsoleUI.ANSI_RED + "Incorrect. This was not the historical choice." + ConsoleUI.ANSI_RESET);
+        }
+        System.out.println(currentLevel.getSummary());
+    }
+
+    private void displayProgressBar(int score, int total) {
+        int barWidth = 20;
+        int progress = (int) ((double) score / total * barWidth);
+        int percentage = (int) ((double) score / total * 100);
+
+        StringBuilder bar = new StringBuilder(ConsoleUI.ANSI_CYAN + "Progress: [");
+        for (int i = 0; i < barWidth; i++) {
+            if (i < progress) {
+                bar.append("█");
+            } else {
+                bar.append(" ");
+            }
+        }
+        bar.append("] ").append(percentage).append("%").append(ConsoleUI.ANSI_RESET);
+        System.out.println(bar.toString());
+        System.out.println();
+    }
+
+    private void displayChoicesSummary() {
+        System.out.println(ConsoleUI.ANSI_PURPLE + "\n=========================================");
+        System.out.println("           Your Choices Summary          ");
+        System.out.println("=========================================" + ConsoleUI.ANSI_RESET);
+        for (String choice : playerChoices) {
+            System.out.println(choice);
+        }
+        System.out.println();
     }
 
     public int getScore() {
         return score;
-    }
-
-    public int getMaxScore() {
-        return currentLeader != null ? currentLeader.getLevels().size() : 0;
-    }
-
-    public boolean isGameOver() {
-        return currentLeader != null && currentLevelIndex >= currentLeader.getLevels().size();
-    }
-
-    public String getFinalSummary() {
-        StringBuilder summary = new StringBuilder("Game Over!\n");
-        summary.append("Leader: ").append(currentLeader.getName()).append("\n");
-        summary.append("Score: ").append(score).append("/").append(getMaxScore()).append("\n");
-        summary.append("Choices Made:\n");
-        for (int i = 0; i < playerChoices.size(); i++) {
-            summary.append("Level ").append(i + 1).append(": ")
-                    .append(playerChoices.get(i).getText()).append("\n");
-        }
-        return summary.toString();
-    }
-
-    public List<Leader> getLeaders() {
-        return leaders;
-    }
-
-    // New: Bubble Sort to sort leaders by name
-    public void sortLeaders() {
-        for (int i = 0; i < leaders.size() - 1; i++) {
-            for (int j = 0; j < leaders.size() - i - 1; j++) {
-                if (leaders.get(j).getName().compareTo(leaders.get(j + 1).getName()) > 0) {
-                    Leader temp = leaders.get(j);
-                    leaders.set(j, leaders.get(j + 1));
-                    leaders.set(j + 1, temp);
-                }
-            }
-        }
-    }
-
-    // New: Linear Search to find a level by keyword in description
-    public Level searchLevel(String keyword) {
-        for (Leader leader : leaders) {
-            for (Level level : leader.getLevels()) {
-                if (level.getDescription().toLowerCase().contains(keyword.toLowerCase())) {
-                    return level;
-                }
-            }
-        }
-        return null; // Return null if no match found
     }
 }

@@ -1,10 +1,12 @@
+import java.util.List;
+
 public class Level {
     private int number;
     private String description;
-    private Choice[] choices;
+    private List<Choice> choices;
     private String summary;
 
-    public Level(int number, String description, Choice[] choices, String summary) {
+    public Level(int number, String description, List<Choice> choices, String summary) {
         this.number = number;
         this.description = description;
         this.choices = choices;
@@ -19,7 +21,7 @@ public class Level {
         return description;
     }
 
-    public Choice[] getChoices() {
+    public List<Choice> getChoices() {
         return choices;
     }
 
