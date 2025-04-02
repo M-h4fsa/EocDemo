@@ -1,0 +1,41 @@
+[
+  {
+    "name": "Winston Churchill",
+    "backstory": "Led Britain through WWII.",
+    "levels": [
+      {
+        "number": 1,
+        "description": "Germany begins the Blitz. What do you do?",
+        "choices": [
+          {"text": "Order resistance and evacuation.", "isHistorical": true},
+          {"text": "Negotiate a ceasefire.", "isHistorical": false}
+        ],
+        "summary": "Churchill chose resistance, rallying the nation."
+      },
+      {
+        "number": 2,
+        "description": "Plan the North African campaign.",
+        "choices": [
+          {"text": "Support Montgomery’s offensive.", "isHistorical": true},
+          {"text": "Focus on naval operations.", "isHistorical": false}
+        ],
+        "summary": "Montgomery’s victory turned the tide."
+      }
+    ]
+  },
+  {
+    "name": "Joseph Stalin",
+    "backstory": "Ruled the Soviet Union during WWII.",
+    "levels": [
+      {
+        "number": 1,
+        "description": "Germany invades in Operation Barbarossa.",
+        "choices": [
+          {"text": "Order a scorched-earth retreat.", "isHistorical": true},
+          {"text": "Launch a counterattack.", "isHistorical": false}
+        ],
+        "summary": "Scorched-earth delayed the Germans."
+      }
+    ]
+  }
+]
