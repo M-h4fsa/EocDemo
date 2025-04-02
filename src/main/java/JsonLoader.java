@@ -1,9 +1,8 @@
 import org.json.JSONArray;
 import org.json.JSONObject;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.InputStream;
 
 public class JsonLoader {
     private String filePath;
@@ -13,7 +12,12 @@ public class JsonLoader {
     }
 
     public List<Leader> loadLeaders() throws Exception {
-        String jsonString = new String(Files.readAllBytes(Paths.get(filePath)));
+        // Load from classpath (src/main/resources)
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(filePath);
+        if (inputStream == null) {
+            throw new Exception("Could not find resource: " + filePath);
+        }
+        String jsonString = new String(inputStream.readAllBytes());
         JSONArray jsonArray = new JSONArray(jsonString);
         List<Leader> leaders = new ArrayList<>();
 
