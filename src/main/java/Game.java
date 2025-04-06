@@ -53,7 +53,7 @@ public class Game {
             int choiceIndex = ui.getPlayerChoice() - 1;
             makeChoice(choiceIndex);
             currentLevelIndex++;
-            displayProgressBar(score, totalLevels); // Progress based on score
+            displayProgressBar(score, totalLevels);
         }
     }
 

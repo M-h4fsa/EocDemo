@@ -29,7 +29,7 @@ public class ConsoleUI {
         System.out.println("   Thank you for playing Echoes of Command!   ");
         System.out.println("=========================================" + ANSI_RESET);
     }
-
+    //linear search
     public void searchLevels(List<Leader> leaders) {
         System.out.println(ANSI_PURPLE + "Would you like to search for a level before starting?" + ANSI_RESET);
         System.out.println("Enter a keyword to search for a level (e.g., 'D-Day', '1940'), or press Enter to skip.");
@@ -103,7 +103,7 @@ public class ConsoleUI {
         System.out.println(ANSI_CYAN + "\nYou have chosen " + selectedLeader.getName() + "!\n" + ANSI_RESET);
         return selectedLeader;
     }
-
+    //bubble sort for leaders names
     private void sortLeaders(List<Leader> leaders) {
         int n = leaders.size();
         for (int i = 0; i < n - 1; i++) {
